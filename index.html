@@ -122,14 +122,14 @@
                         const usdPriceATH = 69000
                         const priceATH = (usdPriceATH * exchangeRateATH)
                         const isAboveATH = priceNow >= priceATH ? "Yes" : "No"
-                        if (!priceNow || !isAboveATH) {return};
+                        if (!priceNow || !isAboveATH || !exchangeRateNow || !exchangeRateATH) {return};
                         const tableRow = {
                             ticker: ticker,
                             currencyName: currencyName,
                             exchangeRateNow: exchangeRateNow,
                             exchangeRateATH: exchangeRateATH,
-                            priceNow: priceNow.toFixed(2),
-                            priceATH: priceATH.toFixed(2),
+                            priceNow: priceNow.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}),
+                            priceATH: priceATH.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}),
                             isAboveATH: isAboveATH,
                             percentAway: (((priceNow - priceATH) / priceATH) * 100).toFixed(2)
                         }
@@ -145,7 +145,7 @@
 
             function updateTable() {
                 //tableRef.current.innerHTML = ""
-                console.log(state.tableData)
+                //console.log(state.tableData)
                 //gridRef.current.plugin.remove("pagination")
                 //gridRef.current.plugin.remove("search")
                 gridRef.current.updateConfig({

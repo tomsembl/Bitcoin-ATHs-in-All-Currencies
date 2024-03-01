@@ -126,9 +126,9 @@
                         const currencyName = state.currencyNames[ticker];
                         const exchangeRateNow = state.exchangeRatesNow.usd[ticker.toLowerCase()];
                         const exchangeRateATH = state.exchangeRatesATH.rates[ticker]
-                        const priceNow = (state.priceUSD * exchangeRateNow)
+                        const priceNow = ticker == "BTC" ? 1 : (state.priceUSD * exchangeRateNow)
                         const usdPriceATH = 69000
-                        const priceATH = (usdPriceATH * exchangeRateATH)
+                        const priceATH = ticker == "BTC" ? 1 : (usdPriceATH * exchangeRateATH)
                         const isAboveATH = priceNow >= priceATH ? "Yes" : "No"
                         if (!priceNow || !isAboveATH || !exchangeRateNow || !exchangeRateATH) {return};
                         const tableRow = {

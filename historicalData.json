@@ -1,5 +1,5 @@
 {
-    "ATH2021": {
+    "exchangeRatesATH": {
         "disclaimer": "Usage subject to terms: https://openexchangerates.org/terms",
         "license": "https://openexchangerates.org/license",
         "timestamp": 1636588799,
@@ -177,7 +177,7 @@
             "ZWL": 322
         }
     },
-    "currencies": {
+    "currencyNames": {
         "AED": "United Arab Emirates Dirham",
         "AFN": "Afghan Afghani",
         "ALL": "Albanian Lek",

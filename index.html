@@ -26,9 +26,6 @@
     <body>
         <div id="app"></div>
     </body>
-    <script type="text/javascript">
-        console.log
-    </script>
     <script type="text/babel" defer>
         function App() {
             const priceUrl = 'https://api.coinbase.com/v2/exchange-rates?currency=BTC'
@@ -40,6 +37,11 @@
                 currencyNames: null,
                 tableData: []
             });
+
+            function stripCommas(str) { return str.replace(",", ""); }
+            function sortNumbers(a, b) { a = parseFloat(stripCommas(a)); b = parseFloat(stripCommas(b)); if (a > b) {return 1} else if (a < b) {return -1} else { return 0};}
+            const customSort = { compare: sortNumbers }
+
             const [gridState, setGridState] = React.useState(
                 new exports.Grid({
                     columns: [
@@ -47,10 +49,10 @@
                         { name: "Currency", id: "currencyName", hidden: false },
                         { name: "Exchange Rate Now", id: "exchangeRateNow", hidden: false },
                         { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: false },
-                        { name: "Price Now", id: "priceNow", hidden: false },
-                        { name: "Price at ATH", id: "priceATH", hidden: false },
+                        { name: "Price Now", id: "priceNow", hidden: false, sort: customSort },
+                        { name: "Price at ATH", id: "priceATH", hidden: false, sort: customSort },
                         { name: "Above ATH?", id: "isAboveATH", hidden: false },
-                        { name: "% From ATH", id: "percentAway", hidden: false }
+                        { name: "% From ATH", id: "percentAway", hidden: false, sort: customSort }
                     ],
                     data: () => {
                         return new Promise(() => { });
@@ -61,11 +63,11 @@
                     resizable: true,
                     fixedHeader: true,
                     //height: "60vh",
-                    //style: {
-                    //    table: {
-                    //        'font-size': '0.8em'
-                    //    }
-                    //}
+                    style: {
+                        table: {
+                            'font-size': '1.2vw'
+                        }
+                    }
                 })
             )
             const gridRef = React.useRef(gridState); React.useEffect(() => { gridRef.current = gridState }, [gridState])
@@ -93,7 +95,6 @@
 
             function getHistoricalData() {
                 getJsonFromUrl(historyUrl).then(data => {
-                    console.log(data)
                     setState(prevState => ({
                         ...prevState,
                         exchangeRatesATH: data.exchangeRatesATH,
@@ -135,7 +136,6 @@
                         }
                         tableData.push(tableRow);
                     });
-                    console.log(tableData);
                     setState(prevState => ({
                         ...prevState,
                         tableData: tableData
@@ -147,7 +147,7 @@
                 //tableRef.current.innerHTML = ""
                 //console.log(state.tableData)
                 //gridRef.current.plugin.remove("pagination")
-                //gridRef.current.plugin.remove("search")
+                gridRef.current.plugin.remove("search")
                 gridRef.current.updateConfig({
                     /*columns: state.tableData[0].map(x => {
                         const column = { name: x, id: x, hidden: !(x !== "UploadID") }
@@ -161,26 +161,28 @@
                     }),*/
                     columns: [
                         { name: "Ticker", id: "ticker" },
-                        { name: "Currency", id: "currencyName", hidden: false },
+                        { name: "Currency", id: "currencyName" },
                         { name: "Exchange Rate Now", id: "exchangeRateNow", hidden: true },
                         { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: true },
-                        { name: "Price Now", id: "priceNow" },
-                        { name: "Price at ATH", id: "priceATH" },
-                        { name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`is-medium my-0 py-0 tag ${cell == "Yes" ? "is-success" : "is-danger"}`}>{cell}</p>) },
-                        { name: "% From ATH", id: "percentAway", formatter: (cell) => exports._(<p class={`has-text-weight-bold ${cell > 0 ? "has-text-success" : "has-text-danger"}`}>{`${cell} %`}</p>) }
+                        { name: "Price Now", id: "priceNow", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
+                        { name: "Price at ATH", id: "priceATH", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
+                        //{ name: "Above 2021 ATH?", id: "isAboveATH", attributes: (cell) => ({class: `${cell == "Yes" ? "gridjs-td has-text-success" : cell == "No" ? "gridjs-td has-text-danger" : "gridjs-th-content"}`}) },
+                        //{ name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`is-medium my-0 py-0 tag ${cell == "Yes" ? "is-success" : "is-danger"}`}>{cell}</p>) },//, attributes: {style: "text-size: 1.2vw;"} },
+                        //{ name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`is-medium my-0 py-0 tag ${cell == "Yes" ? "is-success" : "is-danger"}`}>{cell}</p>) },
+                        { name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`has-text-centered has-text-weight-bold ${cell == "Yes" ? "has-text-success" : "has-text-danger"}`}>{cell}</p>) },//, attributes: { class: "has-background-light" } },
+                        { name: "% From ATH", id: "percentAway", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right has-text-weight-bold ${cell > 0 ? "has-text-success" : "has-text-danger"}`}>{`${cell} %`}</p>) }
                     ],
                     data: state.tableData,//[ { ticker:"",currencyName:"",exchangeRateNow:"",exchangeRateATH:"",priceNow:"",priceATH:"",isAboveATH:"",percentAway:"" } ]
                     //pagination : true,
                     //search: true,
-                })
-                gridRef.current.forceRender()
+                }).forceRender()
             }
 
             React.useEffect(() => {
                 getPriceData();
                 getHistoricalData();
                 getExchangeRatesNow();
-                const intervalId = setInterval(getPriceData, 5000);
+                const intervalId = setInterval(getPriceData, 60000);
                 const intervalId2 = setInterval(getExchangeRatesNow, 600000);
             }, []); 
             
@@ -198,8 +200,15 @@
             )
             
             return (
-                <div class="is-flex is-justify-content-center is-align-content-center is-flex-direction-column">
-                    <h1 class="title fs-1">{`BTC: \$${state.priceUSD ? parseFloat(state.priceUSD).toFixed(0) : " "} USD`}</h1>
+                <div class="has-background-light is-flex is-justify-content-center is-align-content-center is-flex-direction-column">
+                    <div class="m-1 is-flex is-justify-content-space-between is-flex-direction-row">
+                        <h1 class="m-2">{`BTC: \$${state.priceUSD ? parseFloat(state.priceUSD).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : " "} USD`}</h1>
+                        <h1 class="m-2">All-Time High: $69,000 USD 2021-11-10</h1>
+                    </div>
+                    <div class="m-1 is-flex is-justify-content-space-between is-flex-direction-row">
+                        <h1></h1>
+                        <h1 class="mx-2 mb-2">{`${state.tableData.filter(x=>x.isAboveATH=="Yes").length}/${state.tableData.length} currencies are above the 2021 ATH`}</h1>
+                    </div>
                     {tableComponent}
                 </div>
                 )            

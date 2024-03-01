@@ -122,7 +122,7 @@
                         const usdPriceATH = 69000
                         const priceATH = (usdPriceATH * exchangeRateATH)
                         const isAboveATH = priceNow >= priceATH ? "Yes" : "No"
-
+                        if (!priceNow || !isAboveATH) {return};
                         const tableRow = {
                             ticker: ticker,
                             currencyName: currencyName,
@@ -199,7 +199,7 @@
             
             return (
                 <div class="is-flex is-justify-content-center is-align-content-center is-flex-direction-column">
-                    <h1 class="title fs-1">{`BTC: \$${parseFloat(state.priceUSD).toFixed(0)} USD`}</h1>
+                    <h1 class="title fs-1">{`BTC: \$${state.priceUSD ? parseFloat(state.priceUSD).toFixed(0) : " "} USD`}</h1>
                     {tableComponent}
                 </div>
                 )            

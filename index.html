@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>BTC ATHs in All Currencies</title>
+        <meta charset="utf-8">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <!-- <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'> -->
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    </head>
+    <body>
+        <div id="app"></div>
+    </body>
+
+    <script type="text/babel">
+        
+
+        function App() {
+            const priceUrl = 'https://api.coinbase.com/v2/exchange-rates?currency=BTC'
+            const historyUrl = "https://raw.githubusercontent.com/tomsembl/Price-Ticker/main/historicalData.json"
+            const exchangeRatesNowUrl = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json"
+            const [state, setState] = React.useState({ 
+                priceUSD: null, 
+                ATH2021: null,
+                currencyNames: null,
+                exchangeRatesNow: null,
+                tableData: null
+            });
+            
+            async function getJsonFromUrl(url) {
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+            
+            function getPriceData() {
+                getJsonFromUrl(priceUrl).then(data => {
+                    setState(prevState => ({
+                        ...prevState,
+                        priceUSD: data.data.rates.USD,
+                    }));
+                });
+            }
+
+            function getHistoricalData() {
+                getJsonFromUrl(historyUrl).then(data => {
+                    setState(prevState => ({
+                        ...prevState,
+                        ATH2021: data.ATH2021,
+                        currencyNames: data.currencies
+                    }));
+                });
+            }
+
+            function getExchangeRatesNow() {
+                getJsonFromUrl(exchangeRatesNowUrl).then(data => {
+                    setState(prevState => ({
+                        ...prevState,
+                        exchangeRatesNow: data
+                    }));
+                });
+            }
+
+            function calculateTableValues() {
+                if (state.exchangeRatesNow != null && state.currencyNames != null && state.priceUSD != null) {
+                    const tableData = []
+                    Object.keys(state.currencyNames).forEach(ticker => {
+                        const currencyName = state.currencyNames[ticker];
+                        const exchangeRateNow = state.exchangeRatesNow.usd[ticker.toLowerCase()];
+                        const exchangeRateATH = state.ATH2021.rates[ticker]
+                        const priceNow = (state.priceUSD * exchangeRateNow)
+                        const usdPriceATH = 69000
+                        const priceATH = (usdPriceATH * exchangeRateATH)
+                        const isAboveATH = priceNow >= priceATH
+                        
+                        const tableRow = {
+                            ticker: ticker,
+                            exchangeRateNow: exchangeRateNow,
+                            exchangeRateATH: exchangeRateATH,
+                            currencyName: currencyName,
+                            priceNow: priceNow,
+                            priceATH: priceATH,
+                            isAboveATH: isAboveATH,
+                            percentAway: (((priceNow - priceATH) / priceATH) * 100).toFixed(2)
+                        }
+                        tableData.push(tableRow);
+                    });
+                    console.log(tableData);
+                    setState(prevState => ({
+                        ...prevState,
+                        tableData: tableData
+                    }));
+                }
+            }
+            
+
+            React.useEffect(() => {
+                getPriceData();
+                getHistoricalData();
+                getExchangeRatesNow();
+                const intervalId = setInterval(getPriceData, 5000);
+                const intervalId2 = setInterval(getExchangeRatesNow, 600000);
+            }, []); 
+            
+            
+            React.useEffect(calculateTableValues, [state.exchangeRatesNow, state.currencyNames, state.priceUSD]); 
+            return (
+                <div class="is-flex is-justify-content-center is-align-content-center is-flex-direction-column">
+                    <h1 class="title fs-1">{`${parseFloat(state.priceUSD).toFixed(0)} USD`}</h1>
+                </div>
+            )            
+        }
+        ReactDOM.render(<App />, document.querySelector("#app"));
+    </script>
+</html>

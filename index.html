@@ -39,7 +39,7 @@
                 tableData: []
             });
 
-            function stripCommas(str) { return str.replace(",", ""); }
+            function stripCommas(str) { return str.replaceAll(",", ""); }
             function sortNumbers(a, b) { a = parseFloat(stripCommas(a)); b = parseFloat(stripCommas(b)); if (a > b) {return 1} else if (a < b) {return -1} else { return 0};}
             const customSort = { compare: sortNumbers }
 

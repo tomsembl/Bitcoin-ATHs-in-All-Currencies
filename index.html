@@ -47,16 +47,17 @@
             const [gridState, setGridState] = React.useState(
                 new exports.Grid({
                     columns: ([
-                        { name: "Ticker", id: "ticker", hidden: false },
+                        { name: "", id: "rank" },
+                        { name: "Ticker", id: "ticker" },
                         ].concat(window.innerWidth < 768 ? [
-                        { name: "Currency", id: "currencyName", hidden: false },
+                        { name: "Currency", id: "currencyName", },
                         ] : []).concat([
-                        { name: "Exchange Rate Now", id: "exchangeRateNow", hidden: false },
-                        { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: false },
-                        { name: "Above ATH?", id: "isAboveATH", hidden: false },
-                        { name: "% From ATH", id: "percentAway", hidden: false, sort: customSort },
-                        { name: "₿ Price at ATH", id: "priceATH", hidden: false, sort: customSort },
-                        { name: "₿ Price Now", id: "priceNow", hidden: false, sort: customSort },
+                        { name: "Exchange Rate Now", id: "exchangeRateNow", hidden: true },
+                        { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: true },
+                        { name: "Above ATH?", id: "isAboveATH" },
+                        { name: "% From ATH", id: "percentAway", sort: customSort },
+                        { name: "₿ Price at ATH", id: "priceATH", sort: customSort },
+                        { name: "₿ Price Now", id: "priceNow", sort: customSort },
                     ])),
                     data: () => {
                         return new Promise(() => { });
@@ -175,6 +176,7 @@
                     }),*/
                     //if it's a phone
                     columns: ([
+                        { name: "", id: "rank" },
                         { name: "Ticker", id: "ticker" },
                         ].concat(window.innerWidth < 768 ? [
                         { name: "", id: "flagEmoji", sort: false },

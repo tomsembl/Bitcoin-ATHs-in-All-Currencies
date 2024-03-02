@@ -46,16 +46,18 @@
 
             const [gridState, setGridState] = React.useState(
                 new exports.Grid({
-                    columns: [
+                    columns: ([
                         { name: "Ticker", id: "ticker", hidden: false },
+                        ].concat(window.innerWidth < 768 ? [
                         { name: "Currency", id: "currencyName", hidden: false },
+                        ] : []).concat([
                         { name: "Exchange Rate Now", id: "exchangeRateNow", hidden: false },
                         { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: false },
                         { name: "Above ATH?", id: "isAboveATH", hidden: false },
                         { name: "% From ATH", id: "percentAway", hidden: false, sort: customSort },
                         { name: "₿ Price at ATH", id: "priceATH", hidden: false, sort: customSort },
                         { name: "₿ Price Now", id: "priceNow", hidden: false, sort: customSort },
-                    ],
+                    ])),
                     data: () => {
                         return new Promise(() => { });
                     },
@@ -147,7 +149,6 @@
                         }
                         tableData.push(tableRow);
                         tableData.sort((x,y)=>customSort.compare(y.percentAway,x.percentAway))
-                        console.log(tableData)
                     });
                     setState(prevState => ({
                         ...prevState,
@@ -172,20 +173,23 @@
                         }
                         return column
                     }),*/
-                    columns: [
+                    //if it's a phone
+                    columns: ([
                         { name: "Ticker", id: "ticker" },
-                        { name: "", id: "flagEmoji" },
+                        ].concat(window.innerWidth < 768 ? [
+                        { name: "", id: "flagEmoji", sort: false },
+                        ] : []).concat([
                         { name: "Currency", id: "currencyName" },
                         { name: "Exchange Rate Now", id: "exchangeRateNow", hidden: true },
                         { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: true },
                         { name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`has-text-centered has-text-weight-bold ${cell == "Yes" ? "has-text-success" : "has-text-danger"}`}>{cell}</p>) },//, attributes: { class: "has-background-light" } },
-                        { name: "% From ATH", id: "percentAway", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right has-text-weight-bold ${cell >= 0 ? "has-text-success" : "has-text-danger"}`}>{`${cell} %`}</p>) },
+                        { name: "% From ATH", id: "percentAway", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right has-text-weight-bold ${cell > 0 ? "has-text-success" : cell ==0 ? "" : "has-text-danger"}`}>{`${cell} %`}</p>) },
                         { name: "₿ Price at ATH", id: "priceATH", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
                         { name: "₿ Price Now", id: "priceNow", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
                         //{ name: "Above 2021 ATH?", id: "isAboveATH", attributes: (cell) => ({class: `${cell == "Yes" ? "gridjs-td has-text-success" : cell == "No" ? "gridjs-td has-text-danger" : "gridjs-th-content"}`}) },
                         //{ name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`is-medium my-0 py-0 tag ${cell == "Yes" ? "is-success" : "is-danger"}`}>{cell}</p>) },//, attributes: {style: "text-size: 1.2vw;"} },
                         //{ name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`is-medium my-0 py-0 tag ${cell == "Yes" ? "is-success" : "is-danger"}`}>{cell}</p>) },
-                    ],
+                    ])),
                     data: state.tableData,//[ { ticker:"",currencyName:"",exchangeRateNow:"",exchangeRateATH:"",priceNow:"",priceATH:"",isAboveATH:"",percentAway:"" } ]
                     //pagination : true,
                     //search: true,

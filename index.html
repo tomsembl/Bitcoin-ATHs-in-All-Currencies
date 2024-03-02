@@ -201,7 +201,6 @@
 
             const tableComponent = (
                 <div style={{margin: "4vw 2vw",padding: "2vw 2vw"}} class="box is-flex is-flex-direction-column box-background">
-                    
                     <div class="table-container">
                         <div ref={tableRef} id="table"></div>
                     </div>
@@ -212,7 +211,7 @@
                 <div class="has-background-light is-flex is-justify-content-center is-align-content-center is-flex-direction-column">
                     <div class="m-1 is-flex is-justify-content-space-between is-flex-direction-row">
                         <h1 style={{fontSize: "1.5vw"}} class="m-2">{`BTC: \$${state.priceUSD ? parseFloat(state.priceUSD).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : " "} USD`}</h1>
-                        <h1 style={{fontSize: "1.5vw"}} class="m-2">All-Time High: $69,000 USD 2021-11-10</h1>
+                        <h1 style={{fontSize: "1.5vw"}} class="m-2">All-Time High: $69,000 USD on 2021-11-10</h1>
                     </div>
                     <div style={{fontSize: "2.7vw"}} class="title mb-0 mt-6 is-flex is-flex-direction-row is-justify-content-center">
                         <p class="has-text-success has-text-weight-bold ">{state.tableData.filter(x=>x.isAboveATH=="Yes").length}</p>

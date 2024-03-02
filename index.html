@@ -52,8 +52,8 @@
                         { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: false },
                         { name: "Above ATH?", id: "isAboveATH", hidden: false },
                         { name: "% From ATH", id: "percentAway", hidden: false, sort: customSort },
-                        { name: "Price at ATH", id: "priceATH", hidden: false, sort: customSort },
-                        { name: "Price Now", id: "priceNow", hidden: false, sort: customSort },
+                        { name: "₿ Price at ATH", id: "priceATH", hidden: false, sort: customSort },
+                        { name: "₿ Price Now", id: "priceNow", hidden: false, sort: customSort },
                     ],
                     data: () => {
                         return new Promise(() => { });
@@ -176,8 +176,8 @@
                         { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: true },
                         { name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`has-text-centered has-text-weight-bold ${cell == "Yes" ? "has-text-success" : "has-text-danger"}`}>{cell}</p>) },//, attributes: { class: "has-background-light" } },
                         { name: "% From ATH", id: "percentAway", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right has-text-weight-bold ${cell >= 0 ? "has-text-success" : "has-text-danger"}`}>{`${cell} %`}</p>) },
-                        { name: "Price at ATH", id: "priceATH", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
-                        { name: "Price Now", id: "priceNow", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
+                        { name: "₿ Price at ATH", id: "priceATH", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
+                        { name: "₿ Price Now", id: "priceNow", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
                         //{ name: "Above 2021 ATH?", id: "isAboveATH", attributes: (cell) => ({class: `${cell == "Yes" ? "gridjs-td has-text-success" : cell == "No" ? "gridjs-td has-text-danger" : "gridjs-th-content"}`}) },
                         //{ name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`is-medium my-0 py-0 tag ${cell == "Yes" ? "is-success" : "is-danger"}`}>{cell}</p>) },//, attributes: {style: "text-size: 1.2vw;"} },
                         //{ name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`is-medium my-0 py-0 tag ${cell == "Yes" ? "is-success" : "is-danger"}`}>{cell}</p>) },
@@ -217,7 +217,10 @@
                     </div>
                     <div class="m-1 is-flex is-justify-content-space-between is-flex-direction-row">
                         <h1></h1>
-                        <h1 style={{fontSize: "1.5vw"}} class="mx-2 mb-2">{`${state.tableData.filter(x=>x.isAboveATH=="Yes").length}/${state.tableData.length} currencies are above their 2021 ATH`}</h1>
+                        <div class="mx-2 mb-2 is-flex is-flex-direction-row" style={{fontSize: "1.5vw"}}>
+                            <h1 class="has-text-success has-text-weight-medium">{state.tableData.filter(x=>x.isAboveATH=="Yes").length}</h1>
+                            <h1>{`/${state.tableData.length} currencies are above their 2021 ATH`}</h1>
+                        </div>
                     </div>
                     {tableComponent}
                 </div>

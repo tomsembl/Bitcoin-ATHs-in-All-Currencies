@@ -125,7 +125,7 @@
                 if (state.exchangeRatesNow != null && state.currencyNames != null && state.priceUSD != null) {
                     const tableData = []
                     Object.keys(state.currencyNames).forEach(ticker => {
-                        const currencyName = state.currencyNames[ticker].name;
+                        const {name, flagEmoji} = state.currencyNames[ticker];
                         const exchangeRateNow = state.exchangeRatesNow.usd[ticker.toLowerCase()];
                         const exchangeRateATH = state.exchangeRatesATH.rates[ticker]
                         const priceNow = ticker == "BTC" ? 1 : (state.priceUSD * exchangeRateNow)
@@ -136,7 +136,8 @@
                         if (["XPD","XPT","XAG","XDR"].includes(ticker)) {return};
                         const tableRow = {
                             ticker: ticker,
-                            currencyName: currencyName,
+                            flagEmoji: flagEmoji,
+                            currencyName: name,
                             exchangeRateNow: exchangeRateNow,
                             exchangeRateATH: exchangeRateATH,
                             isAboveATH: isAboveATH,
@@ -146,6 +147,7 @@
                         }
                         tableData.push(tableRow);
                         tableData.sort((x,y)=>customSort.compare(y.percentAway,x.percentAway))
+                        console.log(tableData)
                     });
                     setState(prevState => ({
                         ...prevState,
@@ -172,7 +174,7 @@
                     }),*/
                     columns: [
                         { name: "Ticker", id: "ticker" },
-                        {},
+                        { name: "", id: "flagEmoji" },
                         { name: "Currency", id: "currencyName" },
                         { name: "Exchange Rate Now", id: "exchangeRateNow", hidden: true },
                         { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: true },

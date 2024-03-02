@@ -123,12 +123,23 @@
                     }));
                 });
             }
+            
+            function tableSort(a,b) {
+                //check if null and return 1 if so
+                if (a.rank == null && b.rank == null) { return 0; }
+                if (a.rank == null) { return 1; }
+                if (b.rank == null) { return -1; }
+                if (a.rank < b.rank) { return -1; }
+                if (a.rank > b.rank) { return 1; }
+                return 0;
+            }
+
 
             function calculateTableValues() {
                 if (state.exchangeRatesNow != null && state.currencyNames != null && state.priceUSD != null) {
                     const tableData = []
                     Object.keys(state.currencyNames).forEach(ticker => {
-                        const {name, flagEmoji} = state.currencyNames[ticker];
+                        const {name, flagEmoji, rank} = state.currencyNames[ticker];
                         const exchangeRateNow = state.exchangeRatesNow.usd[ticker.toLowerCase()];
                         const exchangeRateATH = state.exchangeRatesATH.rates[ticker]
                         const priceNow = ticker == "BTC" ? 1 : (state.priceUSD * exchangeRateNow)
@@ -138,6 +149,7 @@
                         if (!priceNow || !isAboveATH || !exchangeRateNow || !exchangeRateATH) {return};
                         if (["XPD","XPT","XAG","XDR"].includes(ticker)) {return};
                         const tableRow = {
+                            rank: rank,
                             ticker: ticker,
                             flagEmoji: flagEmoji,
                             currencyName: name,
@@ -149,7 +161,7 @@
                             priceNow: priceNow.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}),
                         }
                         tableData.push(tableRow);
-                        tableData.sort((x,y)=>customSort.compare(y.percentAway,x.percentAway))
+                        tableData.sort(tableSort)
                     });
                     setState(prevState => ({
                         ...prevState,

@@ -151,12 +151,11 @@
                 if (state.exchangeRatesNow != null && state.currencyNames != null && state.priceUSD != null) {
                     const tableData = []
                     Object.keys(state.currencyNames).forEach(ticker => {
-                        if (ticker == "CLF") { console.log(state.exchangeRatesNow.usd)};
-                        const {name, flagEmoji, rank} = state.currencyNames[ticker];
-                        const exchangeRateNow = state.exchangeRatesNow.usd[ticker.toLowerCase()];
-                        const exchangeRateATH = state.exchangeRatesATH.rates[ticker]
+                        const {name, flagEmoji, rank} = state.currencyNames[ticker]; //gdp ranks https://www.worldometers.info/gdp/gdp-by-country/
+                        const exchangeRateNow = state.exchangeRatesNow.usd[ticker.toLowerCase()]; //btcusd https://api.coinbase.com/v2/exchange-rates?currency=BTC
+                        const exchangeRateATH = state.exchangeRatesATH.rates[ticker] //usd-xxx rates https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json
                         const priceNow = ticker == "BTC" ? 1 : (state.priceUSD * exchangeRateNow)
-                        const usdPriceATH = 69000
+                        const usdPriceATH = 69000 //as per binance 2021-11-10
                         const priceATH = ticker == "BTC" ? 1 : (usdPriceATH * exchangeRateATH)
                         const checks = [priceNow, priceATH, exchangeRateNow, exchangeRateATH]
                         const isAboveATH = priceNow > priceATH ? "Yes" : priceNow < priceATH ? "No" : "="

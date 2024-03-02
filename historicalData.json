@@ -341,7 +341,7 @@
         "CNY": {
             "name": "Chinese Yuan",
             "flagEmoji": "🇨🇳",
-            "rank": 2
+            "rank": 3
         },
         "COP": {
             "name": "Colombian Peso",
@@ -411,7 +411,7 @@
         "EUR": {
             "name": "Euro",
             "flagEmoji": "🇪🇺",
-            "rank": 4
+            "rank": 2
         },
         "FJD": {
             "name": "Fijian Dollar",
@@ -546,7 +546,7 @@
         "JPY": {
             "name": "Japanese Yen",
             "flagEmoji": "🇯🇵",
-            "rank": 3
+            "rank": 4
         },
         "KES": {
             "name": "Kenyan Shilling",

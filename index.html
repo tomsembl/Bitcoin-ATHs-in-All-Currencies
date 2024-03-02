@@ -59,9 +59,9 @@
                         //{ name: "% From ATH", id: "percentAway", sort: customSort },
                         //{ name: "₿ Price at ATH", id: "priceATH", sort: customSort },
                         //{ name: "₿ Price Now", id: "priceNow", sort: customSort },
-                        { name: "", id: "rank" },
+                        { name: "", id: "rank", sort: customSort2 },
                         { name: "Ticker", id: "ticker" },
-                        ].concat(window.innerWidth < 768 ? [
+                        ].concat(window.innerWidth < 900 ? [
                         { name: "", id: "flagEmoji", sort: false },
                         ] : []).concat([
                         { name: "Currency", id: "currencyName" },
@@ -137,15 +137,18 @@
                 });
             }
             
-            function tableSort(a,b) {
-                if (a.rank == null && b.rank == null) { return 0; }
-                if (a.rank == null) { return 1; }
-                if (b.rank == null) { return -1; }
-                if (a.rank < b.rank) { return -1; }
-                if (a.rank > b.rank) { return 1; }
-                return 0;
+            function tableDataSort(a,b) {
+                return tableSort(a.rank,b.rank)
             }
 
+            function tableSort(a,b) {
+                if (a == null && b == null) { return 0; }
+                if (a == null) { return 1; }
+                if (b == null) { return -1; }
+                if (a < b) { return -1; }
+                if (a > b) { return 1; }
+                return 0;
+            }
 
             function calculateTableValues() {
                 if (state.exchangeRatesNow != null && state.currencyNames != null && state.priceUSD != null) {
@@ -174,7 +177,7 @@
                             priceNow: priceNow.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}),
                         }
                         tableData.push(tableRow);
-                        tableData.sort(tableSort)
+                        tableData.sort(tableDataSort)
 
                     });
                     setState(prevState => ({

@@ -125,7 +125,7 @@
                 if (state.exchangeRatesNow != null && state.currencyNames != null && state.priceUSD != null) {
                     const tableData = []
                     Object.keys(state.currencyNames).forEach(ticker => {
-                        const currencyName = state.currencyNames[ticker];
+                        const currencyName = state.currencyNames[ticker].name;
                         const exchangeRateNow = state.exchangeRatesNow.usd[ticker.toLowerCase()];
                         const exchangeRateATH = state.exchangeRatesATH.rates[ticker]
                         const priceNow = ticker == "BTC" ? 1 : (state.priceUSD * exchangeRateNow)
@@ -133,7 +133,7 @@
                         const priceATH = ticker == "BTC" ? 1 : (usdPriceATH * exchangeRateATH)
                         const isAboveATH = priceNow >= priceATH ? "Yes" : "No"
                         if (!priceNow || !isAboveATH || !exchangeRateNow || !exchangeRateATH) {return};
-                        if (["XPD","XPT","XAG"].includes(ticker)) {return};
+                        if (["XPD","XPT","XAG","XDR"].includes(ticker)) {return};
                         const tableRow = {
                             ticker: ticker,
                             currencyName: currencyName,
@@ -172,6 +172,7 @@
                     }),*/
                     columns: [
                         { name: "Ticker", id: "ticker" },
+                        {},
                         { name: "Currency", id: "currencyName" },
                         { name: "Exchange Rate Now", id: "exchangeRateNow", hidden: true },
                         { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: true },

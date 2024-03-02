@@ -43,21 +43,34 @@
             function stripCommas(str) { return str.replaceAll(",", ""); }
             function sortNumbers(a, b) { a = parseFloat(stripCommas(a)); b = parseFloat(stripCommas(b)); if (a > b) {return 1} else if (a < b) {return -1} else { return 0};}
             const customSort = { compare: sortNumbers }
+            const customSort2 = { compare: tableSort }
 
             const [gridState, setGridState] = React.useState(
                 new exports.Grid({
                     columns: ([
+                        //{ name: "", id: "rank" },
+                        //{ name: "Ticker", id: "ticker" },
+                        //].concat(window.innerWidth < 768 ? [
+                        //{ name: "Currency", id: "currencyName", },
+                        //] : []).concat([
+                        //{ name: "Exchange Rate Now", id: "exchangeRateNow", hidden: true },
+                        //{ name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: true },
+                        //{ name: "Above ATH?", id: "isAboveATH" },
+                        //{ name: "% From ATH", id: "percentAway", sort: customSort },
+                        //{ name: "₿ Price at ATH", id: "priceATH", sort: customSort },
+                        //{ name: "₿ Price Now", id: "priceNow", sort: customSort },
                         { name: "", id: "rank" },
                         { name: "Ticker", id: "ticker" },
                         ].concat(window.innerWidth < 768 ? [
-                        { name: "Currency", id: "currencyName", },
+                        { name: "", id: "flagEmoji", sort: false },
                         ] : []).concat([
+                        { name: "Currency", id: "currencyName" },
                         { name: "Exchange Rate Now", id: "exchangeRateNow", hidden: true },
                         { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: true },
-                        { name: "Above ATH?", id: "isAboveATH" },
-                        { name: "% From ATH", id: "percentAway", sort: customSort },
-                        { name: "₿ Price at ATH", id: "priceATH", sort: customSort },
-                        { name: "₿ Price Now", id: "priceNow", sort: customSort },
+                        { name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`has-text-centered has-text-weight-bold ${cell == "Yes" ? "has-text-success" : cell == "No" ? "has-text-danger" : ""}`}>{cell}</p>) },
+                        { name: "% From ATH", id: "percentAway", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right has-text-weight-bold ${cell > 0 ? "has-text-success" : cell ==0 ? "" : "has-text-danger"}`}>{`${cell} %`}</p>) },
+                        { name: "₿ Price at ATH", id: "priceATH", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
+                        { name: "₿ Price Now", id: "priceNow", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
                     ])),
                     data: () => {
                         return new Promise(() => { });
@@ -125,7 +138,6 @@
             }
             
             function tableSort(a,b) {
-                //check if null and return 1 if so
                 if (a.rank == null && b.rank == null) { return 0; }
                 if (a.rank == null) { return 1; }
                 if (b.rank == null) { return -1; }
@@ -139,14 +151,16 @@
                 if (state.exchangeRatesNow != null && state.currencyNames != null && state.priceUSD != null) {
                     const tableData = []
                     Object.keys(state.currencyNames).forEach(ticker => {
+                        if (ticker == "CLF") { console.log(state.exchangeRatesNow.usd)};
                         const {name, flagEmoji, rank} = state.currencyNames[ticker];
                         const exchangeRateNow = state.exchangeRatesNow.usd[ticker.toLowerCase()];
                         const exchangeRateATH = state.exchangeRatesATH.rates[ticker]
                         const priceNow = ticker == "BTC" ? 1 : (state.priceUSD * exchangeRateNow)
                         const usdPriceATH = 69000
                         const priceATH = ticker == "BTC" ? 1 : (usdPriceATH * exchangeRateATH)
-                        const isAboveATH = priceNow >= priceATH ? "Yes" : "No"
-                        if (!priceNow || !isAboveATH || !exchangeRateNow || !exchangeRateATH) {return};
+                        const checks = [priceNow, priceATH, exchangeRateNow, exchangeRateATH]
+                        const isAboveATH = priceNow > priceATH ? "Yes" : priceNow < priceATH ? "No" : "="
+                        if (checks.includes(null) || checks.includes(NaN)) {return};
                         if (["XPD","XPT","XAG","XDR"].includes(ticker)) {return};
                         const tableRow = {
                             rank: rank,
@@ -162,6 +176,7 @@
                         }
                         tableData.push(tableRow);
                         tableData.sort(tableSort)
+
                     });
                     setState(prevState => ({
                         ...prevState,
@@ -171,42 +186,9 @@
             }
 
             function updateTable() {
-                //tableRef.current.innerHTML = ""
-                //console.log(state.tableData)
-                //gridRef.current.plugin.remove("pagination")
                 gridRef.current.plugin.remove("search")
                 gridRef.current.updateConfig({
-                    /*columns: state.tableData[0].map(x => {
-                        const column = { name: x, id: x, hidden: !(x !== "UploadID") }
-                        if ( ["Link","Popup"].includes(column.id) ) {
-                            column.formatter = (cell) => exports._(<p class={`is-medium tag ${cell == "yes" ? "is-success" : "is-danger"}`}>{cell}</p>)
-                        }
-                        if (column.id == "FileName") {
-                            column.formatter = (cell, row) => exports._(<a onClick={() => { getArchiveImage(row.cells[0].data) }} class="is-underlined">{cell}</a>) 
-                        }
-                        return column
-                    }),*/
-                    //if it's a phone
-                    columns: ([
-                        { name: "", id: "rank" },
-                        { name: "Ticker", id: "ticker" },
-                        ].concat(window.innerWidth < 768 ? [
-                        { name: "", id: "flagEmoji", sort: false },
-                        ] : []).concat([
-                        { name: "Currency", id: "currencyName" },
-                        { name: "Exchange Rate Now", id: "exchangeRateNow", hidden: true },
-                        { name: "Exchange Rate at ATH", id: "exchangeRateATH", hidden: true },
-                        { name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`has-text-centered has-text-weight-bold ${cell == "Yes" ? "has-text-success" : "has-text-danger"}`}>{cell}</p>) },//, attributes: { class: "has-background-light" } },
-                        { name: "% From ATH", id: "percentAway", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right has-text-weight-bold ${cell > 0 ? "has-text-success" : cell ==0 ? "" : "has-text-danger"}`}>{`${cell} %`}</p>) },
-                        { name: "₿ Price at ATH", id: "priceATH", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
-                        { name: "₿ Price Now", id: "priceNow", sort: customSort, formatter: (cell) => exports._(<p class={`has-text-right`}>{cell}</p>) },
-                        //{ name: "Above 2021 ATH?", id: "isAboveATH", attributes: (cell) => ({class: `${cell == "Yes" ? "gridjs-td has-text-success" : cell == "No" ? "gridjs-td has-text-danger" : "gridjs-th-content"}`}) },
-                        //{ name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`is-medium my-0 py-0 tag ${cell == "Yes" ? "is-success" : "is-danger"}`}>{cell}</p>) },//, attributes: {style: "text-size: 1.2vw;"} },
-                        //{ name: "Above 2021 ATH?", id: "isAboveATH", formatter: (cell) => exports._(<p class={`is-medium my-0 py-0 tag ${cell == "Yes" ? "is-success" : "is-danger"}`}>{cell}</p>) },
-                    ])),
-                    data: state.tableData,//[ { ticker:"",currencyName:"",exchangeRateNow:"",exchangeRateATH:"",priceNow:"",priceATH:"",isAboveATH:"",percentAway:"" } ]
-                    //pagination : true,
-                    //search: true,
+                    data: state.tableData,
                 }).forceRender()
             }
 
@@ -214,7 +196,7 @@
                 getPriceData();
                 getHistoricalData();
                 getExchangeRatesNow();
-                const intervalId = setInterval(getPriceData, 60000);
+                const intervalId = setInterval(getPriceData, 5000);
                 const intervalId2 = setInterval(getExchangeRatesNow, 600000);
             }, []); 
             

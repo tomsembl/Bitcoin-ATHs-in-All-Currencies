@@ -126,7 +126,7 @@
                 getJsonFromUrl(priceUrl).then(data => {
                     setState(prevState => ({
                         ...prevState,
-                        priceUSD: 65614.97//data.data.rates.USD,
+                        priceUSD: data.data.rates.USD,
                     }));
                 });
             }
